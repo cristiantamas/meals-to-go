@@ -1,15 +1,17 @@
 import React from "react";
 import { SvgXml } from "react-native-svg";
-import { Text } from "../../../components/typography/text.component";
 
+import { Spacer } from "../../../components/spacer/spacer.component";
+import { Text } from "../../../components/typography/text.component";
 import star from "../../../../assets/star";
 import open from "../../../../assets/open";
 
 import {
   RestaurantCard,
-  Cover,
+  RestaurantCardCover,
   Info,
   Section,
+  SectionEnd,
   Rating,
   Icon,
   Address,
@@ -28,28 +30,30 @@ export const RestaurantInfoCard = ({ restaurant = {} }) => {
     isClosedTemporarily = true,
   } = restaurant;
 
-  const ratingArray = Array.from(new Array(Math.ceil(rating)));
+  const ratingArray = Array.from(new Array(Math.floor(rating)));
+
   return (
     <RestaurantCard elevation={5}>
-      <Cover key={name} source={{ uri: photos[0] }} />
+      <RestaurantCardCover key={name} source={{ uri: photos[0] }} />
       <Info>
         <Text variant="label">{name}</Text>
         <Section>
           <Rating>
-            {ratingArray.map((index) => (
-              <SvgXml
-                id={`'star-'${index}`}
-                xml={star}
-                width={20}
-                height={20}
-              />
+            {ratingArray.map(() => (
+              <SvgXml xml={star} width={20} height={20} />
             ))}
           </Rating>
-          {isClosedTemporarily && (
-            <Text variant="error">CLOSED TEMPORARILY</Text>
-          )}
-          {isOpenNow && <SvgXml xml={open} width={20} height={20} />}
-          <Icon source={{ uri: icon }} />
+          <SectionEnd>
+            {isClosedTemporarily && (
+              <Text variant="error">CLOSED TEMPORARILY</Text>
+            )}
+            <Spacer position="left" size="large">
+              {isOpenNow && <SvgXml xml={open} width={20} height={20} />}
+            </Spacer>
+            <Spacer position="left" size="large">
+              <Icon source={{ uri: icon }} />
+            </Spacer>
+          </SectionEnd>
         </Section>
         <Address>{address}</Address>
       </Info>
