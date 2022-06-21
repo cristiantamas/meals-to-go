@@ -1,37 +1,50 @@
-import React, { useContext } from "react";
-import { ActivityIndicator, Colors } from "react-native-paper";
-import { FlatList, View, TouchableOpacity } from "react-native";
-import styled from "styled-components/native";
+import React, { useContext, useState } from 'react'
+import { ActivityIndicator, Colors } from 'react-native-paper'
+import { FlatList, View, TouchableOpacity } from 'react-native'
+import styled from 'styled-components/native'
 
-import { SafeArea } from "../../../components/utility/safe-area.component";
-import { RestaurantInfoCard } from "../components/restaurant-info-card.component";
-import { Spacer } from "../../../components/spacer/spacer.component";
-import { Search } from "../components/search.component";
+import { SafeArea } from '../../../components/utility/safe-area.component'
+import { FavouritesBar } from '../../../components/favourite/favourites-bar.component'
+import { RestaurantInfoCard } from '../components/restaurant-info-card.component'
+import { Spacer } from '../../../components/spacer/spacer.component'
+import { Search } from '../components/search.component'
 
-import { RestaurantsContext } from "../../../services/restaurants/restaurants.context";
+import { RestaurantsContext } from '../../../services/restaurants/restaurants.context'
+import { FavouritesContext } from '../../../services/favourites/favourites.context'
 
 const RestaurantList = styled(FlatList).attrs({
   contentContainerStyle: {
-    padding: 16,
-  },
-})``;
+    padding: 16
+  }
+})``
 
 const Loading = styled(ActivityIndicator)`
   margin-left: -25px;
-`;
+`
 
 const LoadingContainer = styled(View)`
   position: absolute;
   top: 50%;
   left: 50%;
-`;
+`
 
 export const RestaurantsScreen = ({ navigation }) => {
-  const { isLoading, error, restaurants } = useContext(RestaurantsContext);
+  const { isLoading, error, restaurants } = useContext(RestaurantsContext)
+  const { favourites } = useContext(FavouritesContext)
+  const [isToggled, setIsToggled] = useState(false)
 
   return (
     <SafeArea>
-      <Search />
+      <Search
+        isFavouritesToggled={isToggled}
+        onFavouritesToggle={() => setIsToggled(!isToggled)}
+      />
+      {isToggled && (
+        <FavouritesBar
+          favourites={favourites}
+          onNavigate={navigation.navigate}
+        />
+      )}
       {isLoading ? (
         <LoadingContainer>
           <Loading size={50} animating={true} color={Colors.blue300} />
@@ -43,8 +56,8 @@ export const RestaurantsScreen = ({ navigation }) => {
             return (
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate("RestaurantDetail", {
-                    restaurant: item,
+                  navigation.navigate('RestaurantDetail', {
+                    restaurant: item
                   })
                 }
               >
@@ -52,11 +65,11 @@ export const RestaurantsScreen = ({ navigation }) => {
                   <RestaurantInfoCard restaurant={item} />
                 </Spacer>
               </TouchableOpacity>
-            );
+            )
           }}
           keyExtractor={(item) => item.name}
         />
       )}
     </SafeArea>
-  );
-};
+  )
+}
