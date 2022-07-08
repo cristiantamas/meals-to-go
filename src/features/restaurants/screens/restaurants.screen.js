@@ -9,10 +9,12 @@ import { FavouritesBar } from '../../../components/favourite/favourites-bar.comp
 import { RestaurantInfoCard } from '../components/restaurant-info-card.component'
 import { Spacer } from '../../../components/spacer/spacer.component'
 import { Search } from '../components/search.component'
+import { Text } from '../../../components/typography/text.component'
 
 import { RestaurantList } from '../components/restaurant-list.styles'
 
 import { RestaurantsContext } from '../../../services/restaurants/restaurants.context'
+import { LocationContext } from '../../../services/location/location.context'
 import { FavouritesContext } from '../../../services/favourites/favourites.context'
 
 const Loading = styled(ActivityIndicator)`
@@ -26,10 +28,12 @@ const LoadingContainer = styled(View)`
 `
 
 export const RestaurantsScreen = ({ navigation }) => {
+  const { error: locationError } = useContext(LocationContext)
   const { isLoading, error, restaurants } = useContext(RestaurantsContext)
   const { favourites } = useContext(FavouritesContext)
   const [isToggled, setIsToggled] = useState(false)
 
+  const hasErrors = !!error || !!locationError
   return (
     <SafeArea>
       <Search
@@ -41,6 +45,11 @@ export const RestaurantsScreen = ({ navigation }) => {
           favourites={favourites}
           onNavigate={navigation.navigate}
         />
+      )}
+      {hasErrors && (
+        <Spacer position="bottom" size="large">
+          <Text variant="error">Something went wrong</Text>
+        </Spacer>
       )}
       {isLoading ? (
         <LoadingContainer>
